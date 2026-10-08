@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Report - ShopEasy{% endblock %}
+{% block content %}
+<h1>Sales Report</h1>
+
+<div class="stats">
+    <div class="stat"><b>{{ summary.total_users }}</b>Users</div>
+    <div class="stat"><b>{{ summary.total_orders }}</b>Orders</div>
+    <div class="stat"><b>{{ summary.total_revenue|rupee }}</b>Total revenue</div>
+</div>
+
+<h2>All orders (users + orders + payment JOIN)</h2>
+<table>
+    <tr><th>Order</th><th>Customer</th><th>Date</th><th>Total</th><th>Payment</th></tr>
+    {% for o in all_orders %}
+    <tr>
+        <td>#{{ o.orderid }}</td><td>{{ o.username }}</td><td>{{ o.orderdate }}</td>
+        <td>{{ o.total|rupee }}</td><td>{{ o.paymethod }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<h2>Sales by seller (GROUP BY + SUM)</h2>
+<table>
+    <tr><th>Seller</th><th>Total sales</th></tr>
+    {% for s in sales_by_seller %}
+    <tr><td>{{ s.sname }}</td><td>{{ s.sales|rupee }}</td></tr>
+    {% endfor %}
+</table>
+
+<h2>Low stock products (less than 20)</h2>
+<table>
+    <tr><th>Product</th><th>Stock left</th></tr>
+    {% for p in low_stock %}
+    <tr><td>{{ p.pname }}</td><td>{{ p.qty }}</td></tr>
+    {% else %}
+    <tr><td colspan="2">No product is running low.</td></tr>
+    {% endfor %}
+</table>
+{% endblock %}

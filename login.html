@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Login - ShopEasy{% endblock %}
+{% block content %}
+<div class="form-box">
+    <h2>Login</h2>
+    <form method="POST" action="{{ url_for('login') }}">
+        <label>Username</label>
+        <input type="text" name="username" required>
+        <label>Password</label>
+        <input type="password" name="password" required>
+        <button type="submit">Login</button>
+    </form>
+    <p class="muted">New here? <a href="{{ url_for('register') }}">Create an account</a></p>
+    <p class="muted">Demo login: <b>arjun_raj</b> / <b>password123</b></p>
+</div>
+{% endblock %}

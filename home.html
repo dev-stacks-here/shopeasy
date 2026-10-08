@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Home - ShopEasy{% endblock %}
+{% block content %}
+<h1>All Products</h1>
+
+<!-- Search and filter form. Method GET puts the values in the URL -->
+<form class="filters" method="GET" action="{{ url_for('home') }}">
+    <input type="text" name="q" placeholder="Search product..." value="{{ q }}">
+    <select name="sellerid">
+        <option value="">All sellers</option>
+        {% for s in sellers %}
+            <option value="{{ s.sellerid }}" {% if s.sellerid|string == selected_seller %}selected{% endif %}>{{ s.sname }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit">Search</button>
+    <a class="btn btn-red" href="{{ url_for('home') }}">Clear</a>
+</form>
+
+{% if products %}
+<div class="grid">
+    {% for p in products %}
+    <div class="card">
+        <div class="icon">🛒</div>
+        <h3>{{ p.pname }}</h3>
+        <div class="muted">Sold by {{ p.sname }}</div>
+        <div class="price">{{ p.price|rupee }}</div>
+        {% if p.qty > 0 %}
+            <div class="muted">In stock: {{ p.qty }}</div>
+            <form method="POST" action="{{ url_for('add_to_cart', productid=p.productid) }}">
+                <button type="submit">Add to Cart</button>
+            </form>
+        {% else %}
+            <div class="out">Out of stock</div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+    <p>No products found.</p>
+{% endif %}
+{% endblock %}

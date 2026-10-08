@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Checkout - ShopEasy{% endblock %}
+{% block content %}
+<h1>Checkout</h1>
+
+<p><b>Deliver to:</b> {{ user.firstname }} {{ user.lastname }}, {{ user.address }}</p>
+
+<table>
+    <tr><th>Product</th><th>Price</th><th>Qty</th><th>Total</th></tr>
+    {% for item in items %}
+    <tr>
+        <td>{{ item.pname }}</td>
+        <td>{{ item.price|rupee }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>{{ item.line_total|rupee }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<div class="summary">
+    <p class="grand"><span>Amount to pay</span><span>{{ total|rupee }}</span></p>
+    <p><span>Shipping</span><span>{% if shipping == 0 %}FREE{% else %}Rs. {{ shipping }}{% endif %}</span></p>
+
+    <form method="POST" action="{{ url_for('checkout') }}">
+        <label><b>Payment method</b></label><br>
+        <select name="paymethod" required style="width:100%; padding:8px; margin:6px 0 12px;">
+            {% for m in methods %}
+                <option value="{{ m }}">{{ m }}</option>
+            {% endfor %}
+        </select>
+        <button class="btn-green" type="submit" style="width:100%;">Place Order</button>
+    </form>
+    <p class="muted">Demo only: no real money is charged.</p>
+</div>
+{% endblock %}

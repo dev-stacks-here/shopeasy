@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}ShopEasy{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<!-- NAVIGATION BAR (same on every page) -->
+<div class="navbar">
+    <a class="brand" href="{{ url_for('home') }}">ShopEasy</a>
+    <a href="{{ url_for('home') }}">Home</a>
+    <a href="{{ url_for('sellers') }}">Sellers</a>
+    <a href="{{ url_for('report') }}">Report</a>
+    {% if session.get('userid') %}
+        <a href="{{ url_for('cart') }}">Cart <span class="badge">{{ cart_count }}</span></a>
+        <a href="{{ url_for('orders') }}">My Orders</a>
+        <a href="{{ url_for('logout') }}">Logout ({{ session['username'] }})</a>
+    {% else %}
+        <a href="{{ url_for('login') }}">Login</a>
+        <a href="{{ url_for('register') }}">Register</a>
+    {% endif %}
+</div>
+
+<div class="container">
+    <!-- FLASH MESSAGES (success / error messages sent from app.py) -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+    {% endwith %}
+
+    <!-- Each page puts its own content here -->
+    {% block content %}{% endblock %}
+</div>
+
+<div class="footer">ShopEasy - DBMS Mini Project | B.Tech CSE, Manipal University Jaipur</div>
+</body>
+</html>

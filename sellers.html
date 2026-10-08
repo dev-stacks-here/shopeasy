@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Sellers - ShopEasy{% endblock %}
+{% block content %}
+<h1>Our Sellers</h1>
+<table>
+    <tr><th>Seller</th><th>Email</th><th>Phone</th><th>Rating</th><th>Products</th></tr>
+    {% for s in sellers %}
+    <tr>
+        <td>{{ s.sname }}</td>
+        <td>{{ s.email }}</td>
+        <td>{{ s.phone }}</td>
+        <td>{{ s.rating }} / 5</td>
+        <td><a href="{{ url_for('home', sellerid=s.sellerid) }}">{{ s.total_products }} product(s)</a></td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

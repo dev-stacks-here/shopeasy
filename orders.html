@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}My Orders - ShopEasy{% endblock %}
+{% block content %}
+<h1>My Orders</h1>
+
+{% if orders %}
+<table>
+    <tr><th>Order No.</th><th>Date</th><th>Total</th><th>Shipping</th><th>Payment</th><th></th></tr>
+    {% for o in orders %}
+    <tr>
+        <td>#{{ o.orderid }}</td>
+        <td>{{ o.orderdate }}</td>
+        <td>{{ o.total|rupee }}</td>
+        <td>{{ o.shipping }}</td>
+        <td>{{ o.paymethod }}</td>
+        <td><a href="{{ url_for('order_detail', orderid=o.orderid) }}">View</a></td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+    <p>You have not placed any orders yet.</p>
+{% endif %}
+{% endblock %}

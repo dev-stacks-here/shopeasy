@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}My Cart - ShopEasy{% endblock %}
+{% block content %}
+<h1>Your Cart</h1>
+
+{% if items %}
+<table>
+    <tr><th>Product</th><th>Price</th><th>Quantity</th><th>Total</th><th>Remove</th></tr>
+    {% for item in items %}
+    <tr>
+        <td>{{ item.pname }}</td>
+        <td>{{ item.price|rupee }}</td>
+        <td>
+            <form method="POST" action="{{ url_for('update_cart', productid=item.productid) }}">
+                <input class="qty-input" type="number" name="quantity" min="0" max="{{ item.stock }}" value="{{ item.quantity }}">
+                <button type="submit">Update</button>
+            </form>
+        </td>
+        <td>{{ item.line_total|rupee }}</td>
+        <td>
+            <form method="POST" action="{{ url_for('remove_from_cart', productid=item.productid) }}">
+                <button class="btn-red" type="submit">X</button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<div class="summary">
+    <p><span>Total</span><span>{{ subtotal|rupee }}</span></p>
+    <p><span>Shipping</span><span>{% if shipping == 0 %}FREE{% else %}Rs. {{ shipping }}{% endif %}</span></p>
+    <a class="btn btn-green" href="{{ url_for('checkout') }}">Proceed to Checkout</a>
+</div>
+{% else %}
+    <p>Your cart is empty. <a href="{{ url_for('home') }}">Start shopping</a></p>
+{% endif %}
+{% endblock %}

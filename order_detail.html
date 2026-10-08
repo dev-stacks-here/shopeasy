@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Order #{{ order.orderid }} - ShopEasy{% endblock %}
+{% block content %}
+<h1>Order #{{ order.orderid }}</h1>
+<p>
+    <b>Date:</b> {{ order.orderdate }}<br>
+    <b>Deliver to:</b> {{ order.firstname }} {{ order.lastname }}, {{ order.address }}<br>
+    <b>Payment:</b> {{ order.paymethod }} ({{ order.amount|rupee }})
+</p>
+
+<table>
+    <tr><th>Product</th><th>Unit price</th><th>Qty</th><th>Total</th></tr>
+    {% for item in items %}
+    <tr>
+        <td>{{ item.pname }}</td>
+        <td>{{ item.unitprice|rupee }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>{{ item.line_total|rupee }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<div class="summary">
+    <p><span>Shipping</span><span>{% if order.shipping == 'FREE' %}FREE{% else %}Rs. {{ order.shipping }}{% endif %}</span></p>
+    <p class="grand"><span>Order total</span><span>{{ order.total|rupee }}</span></p>
+</div>
+<p><a href="{{ url_for('orders') }}">&larr; Back to my orders</a></p>
+{% endblock %}
