@@ -6,21 +6,74 @@
 # marked with that URL (a "route"), the function talks to MySQL, and then it
 # sends back an HTML page (a "template") filled with data.
 
+import os
 from datetime import datetime
 
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from werkzeug.security import generate_password_hash, check_password_hash
+import mysql.connector
 
 import config
 from db import get_connection, fetch_all, fetch_one, execute
 
-# Tell Flask where our HTML (frontend) files are kept
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+
+# Tell Flask where our HTML and static files are kept
 app = Flask(
     __name__,
-    template_folder="../frontend/templates",
-    static_folder="../frontend/static",
+    template_folder=os.path.join(BASE_DIR, "templates"),
+    static_folder=os.path.join(BASE_DIR, "static"),
 )
 app.secret_key = config.SECRET_KEY
+
+
+@app.errorhandler(mysql.connector.Error)
+def handle_db_error(error):
+    """Gracefully show a helpful setup message if the database is not connected."""
+    return (
+        f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>ShopEasy - Database Connection Required</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <style>
+                body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f8fafc; color: #1e293b; padding: 2rem; display: flex; justify-content: center; }}
+                .card {{ max-width: 600px; background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 2rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }}
+                h2 {{ color: #dc2626; margin-top: 0; }}
+                code {{ background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }}
+                ol {{ line-height: 1.6; padding-left: 1.2rem; }}
+                .alert {{ background: #fef2f2; border: 1px solid #fee2e2; border-radius: 8px; padding: 0.75rem 1rem; color: #991b1b; font-size: 0.9rem; margin-bottom: 1.5rem; word-break: break-all; }}
+            </style>
+        </head>
+        <body>
+            <div class="card">
+                <h2>Database Connection Required</h2>
+                <div class="alert"><strong>Error details:</strong> {str(error)}</div>
+                <p>ShopEasy is hosted successfully on Vercel, but could not connect to a MySQL database.</p>
+                <p>Because Vercel runs in the cloud (serverless), it cannot connect to <code>localhost</code>.</p>
+                <h3>How to fix this:</h3>
+                <ol>
+                    <li>Create a free cloud MySQL database (e.g. on <strong>TiDB Cloud</strong> or <strong>Aiven</strong>).</li>
+                    <li>Run <code>schema.sql</code> in your cloud database console to create the tables.</li>
+                    <li>In your <strong>Vercel Dashboard &rarr; Project Settings &rarr; Environment Variables</strong>, set:
+                        <ul style="margin-top: 0.5rem;">
+                            <li><code>DB_HOST</code></li>
+                            <li><code>DB_PORT</code></li>
+                            <li><code>DB_USER</code></li>
+                            <li><code>DB_PASSWORD</code></li>
+                            <li><code>DB_NAME</code></li>
+                        </ul>
+                    </li>
+                    <li>Redeploy your project on Vercel.</li>
+                </ol>
+            </div>
+        </body>
+        </html>
+        """,
+        500,
+    )
+
 
 
 # =====================================================================
